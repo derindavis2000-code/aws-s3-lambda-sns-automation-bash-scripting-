@@ -1,19 +1,18 @@
 #!/bin/bash
-set -e # Stop on error
+set -e 
 
-# Variables - Update these!
 aws_region="us-east-1"
 bucket_name="dd-ultimate-bucket-$(date +%s)" # Appended timestamp for uniqueness
 lambda_func_name="s3-lambda-function"
 role_name="s3-lambda-sns-role"
-email_address="furyn448@gmail.com" # Change this to your email
+email_address="furyn448@gmail.com" 
 topic_name="s3-lambda-sns-topic"
 
 # 1. Get Account ID
 aws_account_id=$(aws sts get-caller-identity --query 'Account' --output text)
 echo "Using Account ID: $aws_account_id"
 
-# 2. Create IAM Role (with check)
+# 2. Create IAM Role 
 echo "Creating IAM Role..."
 if ! aws iam get-role --role-name "$role_name" >/dev/null 2>&1; then
     aws iam create-role --role-name "$role_name" --assume-role-policy-document '{
@@ -26,7 +25,7 @@ if ! aws iam get-role --role-name "$role_name" >/dev/null 2>&1; then
     }'
     aws iam attach-role-policy --role-name "$role_name" --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
     aws iam attach-role-policy --role-name "$role_name" --policy-arn arn:aws:iam::aws:policy/AmazonSNSFullAccess
-    sleep 10 # Wait for IAM replication
+    sleep 10 
 else
     echo "Role $role_name already exists."
 fi
@@ -55,7 +54,6 @@ else
       --zip-file "fileb://s3-lambda-function.zip"
 fi
 
-# 🔥 ADD THIS HERE
 aws lambda wait function-active --function-name "$lambda_func_name"
 
 # 6. Add S3 Permissions to Lambda (Allow S3 to call Lambda)
