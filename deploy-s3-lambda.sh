@@ -80,4 +80,5 @@ echo "Uploading file to trigger Lambda..."
 echo "Hello World" > test_file.txt
 aws s3 cp test_file.txt "s3://$bucket_name/test_file.txt"
 
-echo "Flow complete! If you confirmed the email, you should receive a notification shortly."
+echo "ready"
+
