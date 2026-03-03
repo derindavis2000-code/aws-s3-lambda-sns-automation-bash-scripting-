@@ -3,22 +3,22 @@ import boto3
 
 def lambda_handler(event, context):
     try:
-        # 1️⃣ Extract S3 bucket and object details
+        # 1️ Extract S3 bucket and object details
         bucket_name = event['Records'][0]['s3']['bucket']['name']
         object_key = event['Records'][0]['s3']['object']['key']
 
         print(f"File '{object_key}' uploaded to bucket '{bucket_name}'")
 
-        # 2️⃣ Get Account ID and Region dynamically
+        # 2️ Get Account ID and Region dynamically
         arn_parts = context.invoked_function_arn.split(":")
         region = arn_parts[3]
         account_id = arn_parts[4]
 
-        # 3️⃣ Construct SNS Topic ARN
+        # 3️ Construct SNS Topic ARN
         topic_name = "s3-lambda-sns-topic"  # Must match your .sh script
         topic_arn = f"arn:aws:sns:{region}:{account_id}:{topic_name}"
 
-        # 4️⃣ Send SNS Notification
+        # 4️ Send SNS Notification
         sns_client = boto3.client('sns')
 
         response = sns_client.publish(
